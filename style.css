@@ -1,0 +1,756 @@
+.bg,
+.fade {
+  pointer-events: none;
+}
+.press {
+  z-index: 50;
+  pointer-events: auto;
+}
+
+:root {
+  --next-bg: url("asset/Webprograming_middlevideo_main.png");
+  --bg-opacity: 0.5; /* 초기 배경 50% */
+}
+
+/* 기본 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+}
+.stage {
+  position: fixed;
+  inset: 0;
+}
+
+/* 배경 */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  background: #000 center/cover no-repeat;
+  transition: opacity 0.6s ease;
+}
+.bg-current {
+  opacity: var(--bg-opacity);
+  transition: opacity 0.6s ease;
+}
+.bg-next {
+  background-image: var(--next-bg);
+  opacity: 0;
+}
+
+/* 어둡게 오버레이 */
+.fade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+/* 로고/프레스 */
+.logo-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.logo {
+  width: clamp(500px, 80vw, 1100px);
+  height: auto;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.55));
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+body.loaded .logo {
+  opacity: 1;
+  transform: scale(1);
+}
+.press {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  transform: translate(calc(-50% + 33px), -50%);
+  width: clamp(360px, 46vw, 800px);
+  height: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+.press:hover {
+  animation: flicker 0.9s steps(2, end) infinite;
+  transform: translate(calc(-50% + 33px), -50%) scale(1.03);
+}
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 클릭 즉시 어둡게 (transition 없이 바로) */
+.stage.dim-now .fade {
+  transition: none;
+  opacity: 1;
+}
+
+/* 다음 화면 페이드인 */
+.stage.show-next .bg-next {
+  opacity: 1;
+}
+
+/* 접근성 */
+@media (prefers-reduced-motion: reduce) {
+  .press:hover {
+    animation: none;
+  }
+  .bg,
+  .fade,
+  .logo {
+    transition: none !important;
+  }
+}
+
+/* 전투 화면 텍스트 이미지 */
+.battle-info {
+  position: absolute;
+  left: 3%; /* 위치 조정 가능 */
+  top: 2%;
+  width: 36%; /* 크기 비율 (조정 가능) */
+  height: auto;
+  opacity: 0; /* 처음에는 숨김 */
+  transition: opacity 1s ease;
+  z-index: 3;
+}
+
+/* show-next 되면 이미지 나타나게 */
+.stage.show-next .battle-info {
+  opacity: 1;
+}
+
+.white-shape {
+  position: absolute;
+  left: 24%; /* 위치 조정 */
+  top: 67%;
+  width: 220px;
+  height: 50px;
+  background: #fff;
+  border-radius: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+
+  /* ✅ 첫 화면에서는 완전히 숨김 */
+  opacity: 0;
+  visibility: hidden;
+
+  display: flex; /* 두 번째 화면에서 보일 레이아웃 */
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease, transform 0.2s ease, visibility 0s linear 0.3s;
+}
+
+/* ✅ 두 번째 화면(show-next)에서만 나타남 */
+.stage.show-next .white-shape {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+/* 버튼(텍스트) 스타일 */
+.cta-preorder {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+.cta-preorder:hover {
+  background-color: #222;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.facebook-box {
+  position: absolute;
+  left: 0%; /* PREORDER 박스보다 오른쪽으로 약간 */
+  top: 83%;
+  width: 55px;
+  height: 30px;
+  background: #fff;
+  border-radius: 10%;
+  padding-right: 10%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none; /* 첫 화면에서는 안 보이게 */
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  z-index: 3;
+  transition: all 0.3s ease;
+}
+
+/* 두 번째 화면(show-next)에서만 나타남 */
+.stage.show-next .facebook-box {
+  display: flex;
+}
+
+/* 로고 이미지 스타일 */
+.facebook-icon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.twitter-box {
+  position: absolute;
+  left: 0%; /* PREORDER 박스보다 오른쪽으로 약간 */
+  top: 88%;
+  width: 55px;
+  height: 30px;
+  background: #fff;
+  border-radius: 10%;
+  padding-right: 10%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none; /* 첫 화면에서는 안 보이게 */
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  z-index: 3;
+  transition: all 0.3s ease;
+}
+
+/* 두 번째 화면(show-next)에서만 나타남 */
+.stage.show-next .twitter-box {
+  display: flex;
+}
+
+/* 로고 이미지 스타일 */
+.twitter-icon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.instagram-box {
+  position: absolute;
+  left: 0%; /* PREORDER 박스보다 오른쪽으로 약간 */
+  top: 93%;
+  width: 55px;
+  height: 30px;
+  background: #fff;
+  border-radius: 10%;
+  padding-right: 10%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none; /* 첫 화면에서는 안 보이게 */
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  z-index: 3;
+  transition: all 0.3s ease;
+}
+
+/* 두 번째 화면(show-next)에서만 나타남 */
+.stage.show-next .instagram-box {
+  display: flex;
+}
+
+/* 로고 이미지 스타일 */
+.instagram-icon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.facebook-box a,
+.twitter-box a,
+.instagram-box a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 5px;
+  width: 100%;
+  height: 100%;
+  text-decoration: none; /* 밑줄 제거 */
+  cursor: pointer; /* 커서 모양 변경 */
+  border-radius: 10%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.facebook-box a:hover,
+.twitter-box a:hover,
+.instagram-box a:hover {
+  background-color: #222;
+  transform: scale(1.05);
+}
+
+.facebook-icon,
+.twitter-icon,
+.instagram-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.top-menu {
+  position: absolute;
+  top: 25px;
+  right: 80px;
+  display: flex;
+  gap: 50px;
+  z-index: 10;
+  font-family: Arial, sans-serif;
+  opacity: 0; /* 처음에는 안 보이게 */
+  pointer-events: none; /* 클릭 불가능 */
+  transition: opacity 0.5s ease;
+}
+
+/* 두 번째 화면에서만 나타남 */
+.stage.show-next .top-menu {
+  opacity: 1;
+  pointer-events: auto; /* 클릭 가능하게 */
+}
+
+/* 개별 메뉴 스타일 */
+.menu-item {
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.menu-item:hover {
+  color: #f0d15a;
+  transform: scale(1.1);
+}
+
+/* 🔍 돋보기 아이콘 */
+.search-icon {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); /* PNG가 검정색일 때 흰색으로 보이게 */
+  transition: transform 0.2s ease;
+}
+
+.search-icon:hover {
+  transform: scale(1.2);
+}
+
+.trailer {
+  position: absolute;
+  right: 6%;
+  bottom: 8%;
+  width: min(520px, 42vw);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 4;
+}
+
+/* 두 번째 화면(show-next)에서만 보이게 */
+.stage.show-next .trailer {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.trailer-title {
+  position: absolute;
+  left: 44%;
+  top: 4%;
+  transform: translate(-50%, -50%);
+  margin: 0 0 8px;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: clamp(15px, 2.2vw, 24px);
+  z-index: 5;
+}
+
+.trailer-card {
+  display: block;
+  position: relative; /* 유지 */
+  aspect-ratio: 16/9;
+  transform: translateY(10%) scale(0.9); /* ↓ 10% 내리고 스케일 */
+  left: 15%; /* 가로 이동은 그대로 사용 가능 */
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+}
+
+.trailer-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.trailer-card .play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(28px, 4vw, 44px);
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  pointer-events: none; /* 클릭은 a태그가 받음 */
+}
+
+.trailer-card:hover img {
+  transform: scale(1.03);
+  opacity: 1;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform 4s ease-in-out;
+  will-change: transform;
+  animation: none;
+}
+
+/* 두 번째 페이지 진입 시 확대 + 패럴랙스 흔들림 */
+.stage.show-next .bg-current {
+  transform: scale(1.1);
+  animation: bgMove 8s ease-in-out infinite alternate;
+}
+
+/* 캐릭터 전환 시 배경 확대 */
+.stage.to-character .bg-character {
+  transform: scale(1.1);
+  animation: bgMove 8s ease-in-out infinite alternate;
+}
+
+@keyframes textZoom {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.logo {
+  animation: textZoom 1.2s ease-out forwards;
+}
+
+.bg-current {
+  animation: droneMove 5s ease-in-out infinite;
+}
+
+@keyframes droneMove {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-7px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(1.2deg);
+  }
+}
+
+/* 줌 인/아웃 키프레임 */
+@keyframes bgZoomPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  } /* 얼마나 확대할지 조절 (1.03~1.10 권장) */
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 2) 두 번째 화면에서만 줌을 주고 싶으면 .bg-next 쪽에 걸기 */
+.stage.show-next .bg-next {
+  animation: bgZoomPulse 10s ease-in-out infinite;
+}
+
+/* 사용자 접근성 고려 */
+@media (prefers-reduced-motion: reduce) {
+  .bg-current,
+  .stage.show-next .bg-next {
+    animation: none !important;
+    transform: scale(1) !important;
+  }
+}
+
+@keyframes introTilt {
+  0% {
+    transform: scale(1.06) rotate(-2deg);
+  }
+  50% {
+    transform: scale(1.06) rotate(2deg);
+  }
+  100% {
+    transform: scale(1.06) rotate(-2deg);
+  }
+}
+
+/* 첫 화면(= show-next 붙기 전)에서만 실행 */
+.stage:not(.show-next) .bg-current {
+  transform-origin: 50% 45%;
+  will-change: transform;
+  animation: introTilt 10s ease-in-out infinite;
+}
+
+/* 두 번째 화면 들어가면 회전/줌 제거(배경은 네가 지정한 스타일만 유지) */
+.stage.show-next .bg-current {
+  animation: none; /* 회전 끔 */
+  transform: none; /* 남은 변형 제거 */
+}
+
+:root {
+  --about-bg: url("asset/aboutpage.png"); /* About 배경 이미지 */
+}
+
+/* About 배경 */
+.bg-about {
+  position: absolute;
+  inset: 0;
+  background: #000 center/cover no-repeat;
+  background-image: var(--about-bg);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 1; /* 배경층이므로 낮게 */
+}
+
+/* About 상태일 때: about 배경만 보이게 */
+.stage.to-about .bg-about {
+  opacity: 1;
+}
+.stage.to-about .bg-current,
+.stage.to-about .bg-next {
+  opacity: 0;
+}
+
+/* About 상태일 때 다른 UI 숨기기 (선택사항) */
+.stage.to-about .trailer,
+.stage.to-about .white-shape,
+.stage.to-about .facebook-box,
+.stage.to-about .twitter-box,
+.stage.to-about .instagram-box {
+  display: none !important;
+}
+
+.stage.to-about .bg-current {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* About 클릭 시: 기존 배경 숨기고 새로운 배경 보이기 */
+.stage.to-about .bg-about {
+  opacity: 1;
+}
+
+.stage.to-about .bg-current,
+.stage.to-about .bg-next {
+  opacity: 0;
+}
+
+/* About 상태일 때, 기존 콘텐츠(글자, 버튼 등)는 숨김 */
+.stage.to-about .battle-info,
+.stage.to-about .white-shape,
+.stage.to-about .facebook-box,
+.stage.to-about .twitter-box,
+.stage.to-about .instagram-box,
+.stage.to-about .trailer {
+  display: none !important;
+}
+
+/* ✅ About 화면 전용 로고 스타일 */
+.about-logo {
+  position: absolute;
+  top: 5%; /* 화면 상단 위치 */
+  left: 38%;
+  transform: translateX(-50%);
+  width: 70vw;
+  opacity: 0; /* 기본은 숨김 */
+  z-index: 5;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* About 화면일 때만 나타남 */
+.stage.to-about .about-logo {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.02);
+}
+
+/* About 화면에서 부드럽게 들어오게 */
+.stage.to-about .about-logo {
+  animation: aboutLogoFade 1s ease forwards;
+}
+
+@keyframes aboutLogoFade {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.about-soldier {
+  position: absolute;
+  bottom: 0;
+  right: -5%;
+  width: 85vw;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease, transform 1s ease;
+  z-index: 6; /* 로고보다 위 */
+}
+
+/* About 화면일 때 등장 */
+.stage.to-about .about-soldier {
+  opacity: 1;
+  transform: translateY(0);
+  animation: soldierEnter 1.2s ease-out forwards;
+}
+
+@keyframes soldierEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 기본(About 아님) : 보이지도, 클릭도 안 되게 */
+.about-logo,
+.about-soldier,
+.cod-button {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* About 상태에서만 보이고 클릭 가능 */
+.stage.to-about .about-logo,
+.stage.to-about .about-soldier,
+.stage.to-about .cod-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ===== ABOUT 왼쪽 메뉴 레이아웃 ===== */
+.about-menu {
+  position: absolute;
+  left: 6%; /* 로고 아래 왼쪽 여백 */
+  top: 38%; /* 큰 CALL OF DUTY 아래 쯤 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 8; /* 배경/병사 위, 탑메뉴 아래면 8~12 적당 */
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none; /* 기본은 비활성 (ABOUT 아닐 때) */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.about-menu .item-4 {
+  position: absolute;
+  top: 93%; /* 원하는 높이 */
+  left: -30%; /* 원하는 가로 위치 */
+  transform: scale(0.5);
+}
+
+.about-menu .item-5 {
+  position: absolute;
+  top: 120%;
+  left: -30%;
+  transform: scale(0.5);
+}
+
+/* ABOUT 화면에서만 보이고 클릭 가능 */
+.stage.to-about .about-menu {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* 버튼 자체(이미지) 크기 */
+.about-menu .menu-item {
+  display: block;
+  width: clamp(220px, 20vw, 420px); /* 반응형 폭 */
+}
+.about-menu .menu-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  user-select: none;
+}
+
+/* ===== 깜빡임 효과 ===== */
+@keyframes codFlicker {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* hover 시 깜빡임 */
+.about-menu .menu-item:hover img {
+  animation: codFlicker 0.9s steps(2, end) infinite;
+}
+
+/* 접근성: 모션 줄이기 */
+@media (prefers-reduced-motion: reduce) {
+  .about-menu .menu-item:hover img,
+  .about-menu .item-1 img {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+.stage.show-next .white-shape {
+  opacity: 1;
+  visibility: visible;
+}

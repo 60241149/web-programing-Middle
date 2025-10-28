@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Call of Duty Intro</title>
+
+    <!-- 프리로드 -->
+    <link
+      rel="preload"
+      as="image"
+      href="asset/Webprograming_middlevideo_firstpage.png"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="asset/Webprograming_middlevideo_NAME.png"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="asset/Webprograming_middlevideo_press.png"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="asset/Webprograming_middlevideo_main.png"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <!-- 1) 첫 화면 배경 -->
+      <img
+        id="intel"
+        class="bg bg-current"
+        src="asset/Webprograming_middlevideo_firstpage.png"
+        alt=""
+        decoding="async"
+        fetchpriority="high"
+      />
+
+      <!-- 2) 첫 화면 로고 -->
+      <div class="logo-wrap">
+        <img
+          src="asset/Webprograming_middlevideo_NAME.png"
+          alt="Call of Duty logo"
+          class="logo"
+        />
+      </div>
+
+      <!-- 3) 두 번째 화면 배경 (CSS 변수 --next-bg 로 설정) -->
+      <div class="bg bg-next" aria-hidden="true"></div>
+
+      <div class="bg bg-about" aria-hidden="true"></div>
+
+      <img
+        class="about-logo"
+        src="asset/Webprograming_middlevideo_name2.png"
+        alt="Call of Duty About Logo"
+      />
+
+      <!-- ABOUT 화면 왼쪽 메뉴 -->
+      <nav class="about-menu" aria-label="About section menu">
+        <a class="menu-item item-1" href="#campaign"
+          ><img src="asset/1.png" alt="CAMPAIGN"
+        /></a>
+        <a class="menu-item item-2" href="#Weapon"
+          ><img src="asset/2.png" alt="Weapon"
+        /></a>
+        <a class="menu-item item-3" href="#Spec ops"
+          ><img src="asset/3.png" alt="Spec ops"
+        /></a>
+        <a class="menu-item item-4" href="#Credits"
+          ><img src="asset/4.png" alt="Credits"
+        /></a>
+        <a class="menu-item item-5" href="#Options"
+          ><img src="asset/5.png" alt="Options"
+        /></a>
+      </nav>
+
+      <img
+        class="about-soldier"
+        src="asset/character.png"
+        alt="Soldier character"
+      />
+
+      <!-- 4) 두 번째 화면에서 나타날 정보 이미지 (한 번만) -->
+      <img
+        class="battle-info"
+        src="asset/Webprograming_middlevideo_text.png"
+        alt="About the game text"
+      />
+
+      <!-- 6) 첫 화면에서 누르는 버튼 이미지 -->
+      <img
+        class="press"
+        src="asset/Webprograming_middlevideo_press.png"
+        alt="PRESS START"
+      />
+
+      <div class="white-shape facebook-box">
+        <img src="asset/facebook.png" alt="Facebook" class="facebook-icon" />
+      </div>
+
+      <div class="white-shape twitter-box">
+        <img src="asset/twitter.png" alt="twitter" class="twitter-icon" />
+      </div>
+
+      <div class="white-shape instagram-box">
+        <img src="asset/instagram.png" alt="Instagram" class="instagram-icon" />
+      </div>
+
+      <div class="facebook-box">
+        <a
+          href="https://www.facebook.com"
+          target="_blank"
+          aria-label="Facebook"
+        >
+          <img src="asset/facebook.png" alt="Facebook" class="facebook-icon" />
+        </a>
+      </div>
+
+      <!-- Twitter -->
+      <div class="twitter-box">
+        <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+          <img src="asset/twitter.png" alt="Twitter" class="twitter-icon" />
+        </a>
+      </div>
+
+      <!-- Instagram -->
+      <div class="instagram-box">
+        <a
+          href="https://www.instagram.com"
+          target="_blank"
+          aria-label="Instagram"
+        >
+          <img
+            src="asset/instagram.png"
+            alt="Instagram"
+            class="instagram-icon"
+          />
+        </a>
+      </div>
+
+      <div class="top-menu">
+        <div class="menu-item">Home</div>
+        <div class="menu-item">Games</div>
+        <div class="menu-item">Platforms</div>
+        <div
+          class="menu-item"
+          a
+          href="about.png"
+          class="menu-item"
+          id="nav-about"
+          role="button"
+          aria-label="Open About"
+        >
+          About
+        </div>
+
+        <div class="menu-item search">
+          <img src="asset/magnifier.png" alt="Search" class="search-icon" />
+        </div>
+      </div>
+
+      <section class="trailer" aria-label="Release trailer">
+        <h2 class="trailer-title">RELEASE TRAILER</h2>
+        <a
+          class="trailer-card"
+          href="https://www.youtube.com/watch?v=bH1lHCirCGI"
+          target="_blank"
+          rel="noopener"
+        >
+          <img
+            src="asset/trailerthumbnail.png"
+            alt="Call of Duty Trailer Thumbnail"
+            class="trailer-thumb"
+          />
+          <span class="play">▶</span>
+        </a>
+      </section>
+    </main>
+
+    <script>
+      // 로드 완료 표시(로고 페이드인 등)
+      const intel = document.getElementById("intel");
+      if (intel.complete) document.body.classList.add("loaded");
+      else
+        intel.addEventListener("load", () =>
+          document.body.classList.add("loaded")
+        );
+
+      // 클릭 → 즉시 어둡게 → 0.5초 뒤 다음 화면
+      const stage = document.querySelector(".stage");
+      const press = document.querySelector(".press");
+      press.addEventListener("click", () => {
+        stage.classList.add("dim-now"); // 바로 어둡게
+        setTimeout(() => {
+          stage.classList.add("show-next"); // 두 번째 화면 보이기
+          document.querySelector(".logo-wrap").style.display = "none"; // 첫 화면 로고 숨김
+          press.style.display = "none"; // PRESS START 숨김
+          stage.classList.remove("dim-now"); // 어둡게 해제(transition으로 자연스럽게)
+        }, 500);
+      });
+
+      const navAbout = document.getElementById("nav-about");
+
+      navAbout.addEventListener("click", (e) => {
+        e.preventDefault();
+        stage.classList.add("to-about"); // About 상태 전환
+      });
+
+      // Home 클릭 → 원래 화면으로 복귀
+      document
+        .querySelector(".top-menu .menu-item:first-child")
+        ?.addEventListener("click", () => {
+          stage.classList.remove("to-about");
+        });
+    </script>
+  </body>
+</html>
