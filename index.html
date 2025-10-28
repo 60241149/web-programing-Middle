@@ -93,6 +93,10 @@
         alt="About the game text"
       />
 
+      <div class="white-shape">
+        <button class="cta-preorder">PREORDER NOW</button>
+      </div>
+
       <!-- 6) 첫 화면에서 누르는 버튼 이미지 -->
       <img
         class="press"
@@ -181,6 +185,37 @@
           <span class="play">▶</span>
         </a>
       </section>
+      <!-- BGM (처음엔 멈춤/뮤트) -->
+      <audio
+        id="bgm"
+        src="asset/blockbuster.mp3"
+        preload="auto"
+        loop
+        muted
+      ></audio>
+
+      <!-- 소리 버튼 + 볼륨 슬라이더 -->
+      <div class="audio-wrap" aria-label="Background music controls">
+        <button
+          id="audioBtn"
+          class="audio-btn"
+          aria-pressed="false"
+          aria-label="Turn sound on"
+        >
+          <span class="ico ico-mute" aria-hidden="true">🔇</span>
+          <span class="ico ico-sound" aria-hidden="true">🔊</span>
+        </button>
+        <input
+          id="audioVol"
+          class="audio-vol"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+          aria-label="Volume"
+        />
+      </div>
     </main>
 
     <script>
@@ -219,5 +254,87 @@
           stage.classList.remove("to-about");
         });
     </script>
+    <script>
+      // === BGM 컨트롤 ===
+      const audio = document.getElementById("bgm");
+      const btn = document.getElementById("audioBtn");
+      const vol = document.getElementById("audioVol");
+
+      // 저장된 상태가 있으면 복원 (선택사항)
+      const savedVol = localStorage.getItem("bgm_vol");
+      const savedOn = localStorage.getItem("bgm_on") === "1";
+
+      if (savedVol !== null) {
+        vol.value = Number(savedVol);
+        audio.volume = Number(savedVol);
+      } else {
+        audio.volume = Number(vol.value);
+      }
+
+      // 시작은 항상 muted + paused (자동재생 정책 회피)
+      audio.muted = true;
+
+      const updateUI = () => {
+        if (!audio.paused && !audio.muted) {
+          btn.classList.add("is-on");
+          btn.setAttribute("aria-pressed", "true");
+          btn.setAttribute("aria-label", "Turn sound off");
+        } else {
+          btn.classList.remove("is-on");
+          btn.setAttribute("aria-pressed", "false");
+          btn.setAttribute("aria-label", "Turn sound on");
+        }
+      };
+
+      // 버튼 클릭: 토글 재생/음소거
+      btn.addEventListener("click", async () => {
+        try {
+          if (audio.paused || audio.muted) {
+            audio.muted = false;
+            audio.currentTime = 30; // ✅ 시작 시점을 30초로 설정 (원하는 위치로 변경 가능)
+            audio.volume = Number(vol.value);
+            await audio.play();
+            localStorage.setItem("bgm_on", "1");
+          } else {
+            audio.pause();
+            localStorage.setItem("bgm_on", "0");
+          }
+          updateUI();
+        } catch (e) {
+          console.warn("오디오 재생 실패:", e);
+        }
+      });
+
+      // 볼륨 변경
+      vol.addEventListener("input", () => {
+        audio.volume = Number(vol.value);
+        localStorage.setItem("bgm_vol", String(vol.value));
+      });
+
+      // 페이지 재방문 시 자동으로 이전 on/off 복원 (사용자 제스처 필요 없게)
+      // 단, 일부 iOS 브라우저는 여전히 첫 클릭 전까진 재생을 막을 수 있음
+      window.addEventListener("load", async () => {
+        if (savedOn) {
+          try {
+            audio.muted = false;
+            await audio.play();
+          } catch {
+            // 자동 재생이 막히면 버튼 누르면 됨
+          }
+        }
+        updateUI();
+      });
+
+      // 탭이 백그라운드 갔다 돌아올 때 가끔 멈추면 살짝 재시도
+      document.addEventListener("visibilitychange", async () => {
+        if (!document.hidden && savedOn && audio.paused && !audio.muted) {
+          try {
+            await audio.play();
+          } catch {}
+          updateUI();
+        }
+      });
+    </script>
+    <audio id="bgm" src="asset/blockbuster.mp3" autoplay loop></audio>
   </body>
 </html>
